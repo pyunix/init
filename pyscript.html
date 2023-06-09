@@ -1,0 +1,106 @@
+<!---
+HTML file to kick-start pyunix into pyscript
+
+Loads the latest stable CSS and pyscript.js, then uses "minimal" py-script commands to 
+prepare for terminals and the remaining pyunix environment
+
+Tries to be as "python" as possible
+--->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" Content="IE-Edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Test</title>
+	<link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css" />
+	<script defer src="https://pyscript.net/latest/pyscript.js"></script>
+</head>
+<body>
+
+	<div style="minheight: 200" id="myscreen" value="This is my screen">
+		Hello
+	</div>
+	<py-script>
+		from js import document
+		from pyodide.ffi.wrappers import add_event_listener
+		from io import StringIO
+		import sys
+
+		RealStdout = sys.stdout
+		RealStderr = sys.stderr
+		global ScreenBuffer
+		ScreenBuffer = "Welcome to Python Xterminal"
+		xdisp = Element("myscreen")
+
+		def write_stdout(text):
+			print(text,file=RealStdout)
+
+		def write_stderr(text):
+			print(text,file=RealStderr)
+
+
+		def handle_keypress(evt):
+			#ScreenBuffer += str(evt.key)
+			ScreenBuffer = "abc" + "def"
+			xdisp.element.innerHTML = ScreenBuffer  
+			write_stdout("pressed1 "+str(evt.key))
+
+		document.onkeydown = handle_keypress  
+  
+		NewStdout = StringIO()
+		sys.stdout = NewStdout
+	</py-script>
+	<div> 
+		<py-repl id="my-repl" auto-generate="true"> </py-repl>
+	</div>
+
+</body>
+</html>
+
+<!---
+
+  <div> 
+    <py-repl id="my-repl" auto-generate="true"> </py-repl>
+  </div>
+  
+  
+  
+  <py-register-widget src="./xterm.py" name="myxterm"></py-register-widget>
+  <input type="text" id="myline"/>
+  <button id="submit-button" type="submit" py-Click="xfunc()"> OK </button>
+  <div class="py-box" style="minheight=200">
+    <input id="new-task-content" />
+  </div>
+
+	<py-terminal id="xterm" rows=30></py-terminal>
+
+  <py-script src="./main.py"></py-script>
+
+  <textarea id="mytext" rows="25" cols="80">$</textarea>
+
+<py-script>
+    from js import document
+    def runTextInTag(id):
+        src = document.getElementById(id).value
+        exec(src)
+</py-script>
+
+<button py-click="runTextInTag('area1')" id="run">Run!</button>
+
+"<code style=color:red;>12</code><code style=color:black;>12"
+"<abbr style=color:red;>12</abbr><abbr style=color:black;>345</abbr><br>xyz"
+"<pre style=color:red;>12</pre><pre style=color:black;>34\ndef"
+
+from io import StringIO
+import sys
+tmp = sys.stdout
+my_result = StringIO()
+sys.stdout = my_result
+print('hello world') # output stored in my_result
+sys.stdout = tmp
+print(my_result.getvalue())
+
+
+--->
